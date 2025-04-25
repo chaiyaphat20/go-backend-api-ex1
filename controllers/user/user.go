@@ -13,3 +13,23 @@ func Register(c *gin.Context) {
 		"data": "register",
 	})
 }
+
+func Login(c *gin.Context) {
+	c.JSON(200, gin.H{
+		"data": "login",
+	})
+}
+
+func GetById(c *gin.Context) {
+	id := c.Param("id")
+	c.JSON(200, gin.H{
+		"data": id,
+	})
+}
+
+func SearchByFullname(c *gin.Context) {
+	fullname := c.Query("fullname")
+	c.JSON(200, gin.H{
+		"data": fullname,
+	})
+}
