@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"example.com/gin-backend-api/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -16,9 +17,13 @@ func Connection() {
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		fmt.Println("ไม่สามารถเชื่อมต่อ Database ได้")
-	} else {
-		fmt.Println("เชื่อมต่อ Database success")
+		fmt.Println(err.Error())
+		panic(err)
 	}
+	fmt.Println("เชื่อมต่อ Database success")
 
+	//Migration
+	// db.Migrator().DropTable(&models.User{})  ลบ table
+	db.AutoMigrate(&models.User{})
 	DB = db
 }

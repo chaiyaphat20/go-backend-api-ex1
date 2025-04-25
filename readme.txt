@@ -16,3 +16,4 @@ go get -u gorm.io/gorm
 go get -u gorm.io/driver/postgres
 
 5.
+https://gorm.io/docs/models.html#Fields-Tags
