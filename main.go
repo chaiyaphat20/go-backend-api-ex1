@@ -10,11 +10,11 @@ import (
 )
 
 func main() {
-	router := SetupRouter()
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+	router := SetupRouter()
 	router.Run(":" + os.Getenv("GO_PORT"))
 }
 

@@ -9,3 +9,10 @@ go install github.com/cosmtrek/air@latest
 3.2 export PATH=$PATH:~/go/bin
 3.3 source ~/.zshrc
 3.4 พิมพ์ air ในโปรเจค
+
+
+4.gorm
+go get -u gorm.io/gorm
+go get -u gorm.io/driver/postgres
+
+5.
