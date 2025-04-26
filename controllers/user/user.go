@@ -67,8 +67,17 @@ func Login(c *gin.Context) {
 
 func GetById(c *gin.Context) {
 	id := c.Param("id")
+
+	var user models.User
+	result := configs.DB.First(&user, id) //โดน assign value
+
+	if result.RowsAffected < 1 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "ไม่พบข้อมูลนี้"})
+		return
+	}
+
 	c.JSON(200, gin.H{
-		"data": id,
+		"data": user,
 	})
 }
 
