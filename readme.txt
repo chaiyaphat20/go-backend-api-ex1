@@ -15,8 +15,13 @@ go install github.com/cosmtrek/air@latest
 go get -u gorm.io/gorm
 go get -u gorm.io/driver/postgres
 
-5.
+5.Declaring Models
 https://gorm.io/docs/models.html#Fields-Tags
 
-6.
+6.model binding
 https://gin-gonic.com/en/docs/examples/binding-and-validation/
+
+7.gorm orm query
+https://gorm.io/docs/query.html
+
+8.

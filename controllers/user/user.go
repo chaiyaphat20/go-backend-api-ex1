@@ -1,18 +1,26 @@
 package usercontroller
 
 import (
-	"errors"
 	"net/http"
 
 	"example.com/gin-backend-api/configs"
 	"example.com/gin-backend-api/models"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 func GetAll(c *gin.Context) {
+	var users []models.User
+
+	// .Find(&users) เป็น method ที่รับ pointer ของ slice (&users) ไป แล้วมัน mutate หรือเปลี่ยนแปลงค่าใน slice นั้นโดยตรง
+	// 	func fill(nums *[]int) {
+	//     *nums = append(*nums, 1, 2, 3)
+	// }
+	// configs.DB.Order("id DESC").Find(&users) //ไม่ใช้ users = configs.DB.Find(&users)  เพราะใช้ pointer
+
+	configs.DB.Raw("select * from users order by id desc").Scan(&users)
+
 	c.JSON(200, gin.H{
-		"data": "users",
+		"data": users,
 	})
 }
 
@@ -25,23 +33,17 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	// ตรวจสอบว่า user มีอยู่ในระบบแล้วหรือยัง
-	var existingUser models.User
-	if err := configs.DB.Where("email = ?", input.Email).First(&existingUser).Error; err == nil {
-		// ถ้า err == nil แปลว่ามี user นี้อยู่แล้ว
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Email already exists"})
-		return
-	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
-		// ถ้าเจอ error ที่ไม่ใช่ ErrRecordNotFound แปลว่ามีปัญหาในการ query
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
-		return
-	}
-
 	//สร้าง model
 	user := models.User{
 		FullName: input.Fullname,
 		Email:    input.Email,
-		Password: string(input.Password),
+		Password: input.Password,
+	}
+	//check email ซ้ำ
+	userExist := configs.DB.Where("email =?", input.Email).First(&user)
+	if userExist.RowsAffected == 1 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "มีผผู้ใช้งาน Email นี้ในระบบแล้ว"})
+		return
 	}
 
 	//create จริง
@@ -54,12 +56,6 @@ func Register(c *gin.Context) {
 	// ส่ง response กลับ
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "Register success",
-		"data": gin.H{
-			"id":       user.ID,
-			"fullname": user.FullName,
-			"email":    user.Email,
-			// อย่า return password กลับไป!
-		},
 	})
 }
 
