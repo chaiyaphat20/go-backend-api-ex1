@@ -35,7 +35,7 @@ func Register(c *gin.Context) {
 
 	//สร้าง model
 	user := models.User{
-		FullName: input.Fullname,
+		Fullname: input.Fullname,
 		Email:    input.Email,
 		Password: input.Password,
 	}
@@ -81,9 +81,17 @@ func GetById(c *gin.Context) {
 	})
 }
 
+// ต้องคิดก่อนว่า ต้องการ ผลลัพธ์อันเดียว หรือ หลายอัน
 func SearchByFullname(c *gin.Context) {
-	fullname := c.Query("fullname")
+	fullname := c.Query("fullname") //?fullname=JohnWick
+
+	var users []models.User
+	result := configs.DB.Where("fullname LIKE ?", "%"+fullname+"%").Find(&users) //&users คือ ผลลัพท์ ที่โดย mutation
+	if result.RowsAffected < 1 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "ไม่พบข้อมูลนี้"})
+		return
+	}
 	c.JSON(200, gin.H{
-		"data": fullname,
+		"data": users,
 	})
 }

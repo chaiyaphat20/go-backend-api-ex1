@@ -9,13 +9,13 @@ import (
 
 // table name = users
 type User struct {
-	ID        uint   `gorm:"primaryKey;autoIncrement;not null"`
-	FullName  string `gorm:"type:varchar(255);not null"`
-	Email     string `gorm:"type:varchar(255);not null;unique"`
-	Password  string `gorm:"type:varchar(255);not null"`
-	IsAdmin   bool   `gorm:"type:bool;default:false"` //ถ้า db เป็น is_active จะใช้ column:is_active
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID        uint      `json:"id" gorm:"primaryKey;autoIncrement;not null"`
+	Fullname  string    `json:"fullname" gorm:"type:varchar(255);not null"`
+	Email     string    `json:"email" gorm:"type:varchar(255);not null;unique"`
+	Password  string    `json:"-" gorm:"type:varchar(255);not null"`     //ใช้ - ไม่ต้องแสดง password ทั้ง response
+	IsAdmin   bool      `json:"is_admin" gorm:"type:bool;default:false"` //ถ้า db เป็น is_active จะใช้ column:is_active
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 // method BeforeCreate ของ struct Users  หรือ hook

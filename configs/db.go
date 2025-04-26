@@ -23,7 +23,7 @@ func Connection() {
 	fmt.Println("เชื่อมต่อ Database success")
 
 	//Migration
-	// db.Migrator().DropTable(&models.User{})  ลบ table
+	// db.Migrator().DropTable(&models.User{}) //ลบ table
 	db.AutoMigrate(&models.User{})
 	DB = db
 }
