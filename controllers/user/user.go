@@ -85,13 +85,15 @@ func GetById(c *gin.Context) {
 }
 
 // ต้องคิดก่อนว่า ต้องการ ผลลัพธ์อันเดียว หรือ หลายอัน
+// &page=1&page_size=2
+// {{url}}/users/search?fullname=chaiyaphat s&page=1&page_size=2
 func SearchByFullname(c *gin.Context) {
 	fullname := c.Query("fullname")
 	pageStr := c.DefaultQuery("page", "1")
 	limitStr := c.DefaultQuery("limit", "10")
 
 	page, _ := strconv.Atoi(pageStr)
-	limit, _ := strconv.Atoi(limitStr)
+	limit, _ := strconv.Atoi(limitStr) // แปลง string เป็น int
 
 	var users []models.User
 	var total int64
