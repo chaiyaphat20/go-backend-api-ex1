@@ -24,4 +24,5 @@ https://gin-gonic.com/en/docs/examples/binding-and-validation/
 7.gorm orm query
 https://gorm.io/docs/query.html
 
-8.
+8.scope
+https://gorm.io/docs/scopes.html

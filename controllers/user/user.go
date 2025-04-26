@@ -5,6 +5,7 @@ import (
 
 	"example.com/gin-backend-api/configs"
 	"example.com/gin-backend-api/models"
+	"example.com/gin-backend-api/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -86,9 +87,11 @@ func SearchByFullname(c *gin.Context) {
 	fullname := c.Query("fullname") //?fullname=JohnWick
 
 	var users []models.User
-	result := configs.DB.Where("fullname LIKE ?", "%"+fullname+"%").Find(&users) //&users คือ ผลลัพท์ ที่โดย mutation
+	result := configs.DB.Where("fullname LIKE ?", "%"+fullname+"%").Scopes(utils.Paginate(c)).Find(&users) //&users คือ ผลลัพท์ ที่โดย mutation
 	if result.RowsAffected < 1 {
-		c.JSON(http.StatusNotFound, gin.H{"error": "ไม่พบข้อมูลนี้"})
+		c.JSON(200, gin.H{
+			"data": []models.User{},
+		})
 		return
 	}
 	c.JSON(200, gin.H{
