@@ -17,3 +17,6 @@ go get -u gorm.io/driver/postgres
 
 5.
 https://gorm.io/docs/models.html#Fields-Tags
+
+6.
+https://gin-gonic.com/en/docs/examples/binding-and-validation/
