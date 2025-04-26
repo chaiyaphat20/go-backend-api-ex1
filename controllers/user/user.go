@@ -1,7 +1,9 @@
 package usercontroller
 
 import (
+	"math"
 	"net/http"
+	"strconv"
 
 	"example.com/gin-backend-api/configs"
 	"example.com/gin-backend-api/models"
@@ -84,17 +86,33 @@ func GetById(c *gin.Context) {
 
 // ต้องคิดก่อนว่า ต้องการ ผลลัพธ์อันเดียว หรือ หลายอัน
 func SearchByFullname(c *gin.Context) {
-	fullname := c.Query("fullname") //?fullname=JohnWick
+	fullname := c.Query("fullname")
+	pageStr := c.DefaultQuery("page", "1")
+	limitStr := c.DefaultQuery("limit", "10")
+
+	page, _ := strconv.Atoi(pageStr)
+	limit, _ := strconv.Atoi(limitStr)
 
 	var users []models.User
-	result := configs.DB.Where("fullname LIKE ?", "%"+fullname+"%").Scopes(utils.Paginate(c)).Find(&users) //&users คือ ผลลัพท์ ที่โดย mutation
-	if result.RowsAffected < 1 {
-		c.JSON(200, gin.H{
-			"data": []models.User{},
-		})
-		return
-	}
+	var total int64
+
+	// นับทั้งหมด ห้าม Scopes(utils.Paginate(c)) เด็ดขาด!!
+	configs.DB.Model(&models.User{}).
+		Where("fullname LIKE ?", "%"+fullname+"%").
+		Count(&total)
+
+	// ดึงข้อมูลจริง แบบแบ่งหน้า
+	configs.DB.
+		Where("fullname LIKE ?", "%"+fullname+"%").
+		Scopes(utils.Paginate(c)).
+		Find(&users)
+
+	totalPages := int(math.Ceil(float64(total) / float64(limit)))
+
 	c.JSON(200, gin.H{
-		"data": users,
+		"data":         users,
+		"total_data":   len(users),
+		"current_page": page,
+		"total_pages":  totalPages,
 	})
 }
