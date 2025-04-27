@@ -1,0 +1,9 @@
+services:
+  # Service สำหรับ Go Application
+  go-app:
+    build:
+      context: .
+      dockerfile: dockerfile
+    container_name: go-app
+    ports:
+      - "3002:3001"

@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"example.com/gin-backend-api/routes"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -21,6 +22,16 @@ func main() {
 
 func SetupRouter() *gin.Engine {
 	router := gin.Default()
+
+	//cors
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"*"},
+		AllowHeaders:     []string{"*"},
+		ExposeHeaders:    []string{"*"},
+		AllowCredentials: true,
+	}))
+
 	apiV1 := router.Group("/api/v1") //localhost:3000/api/v1/...
 	routes.InitHomeRoutes(apiV1)
 	routes.InitUserRoutes(apiV1)

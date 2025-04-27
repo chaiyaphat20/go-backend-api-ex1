@@ -14,6 +14,7 @@ type User struct {
 	Email     string    `json:"email" gorm:"type:varchar(255);not null;unique"`
 	Password  string    `json:"-" gorm:"type:varchar(255);not null"`     //ใช้ - ไม่ต้องแสดง password ทั้ง response
 	IsAdmin   bool      `json:"is_admin" gorm:"type:bool;default:false"` //ถ้า db เป็น is_active จะใช้ column:is_active
+	Blogs     []Blog    `json:"blogs"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }

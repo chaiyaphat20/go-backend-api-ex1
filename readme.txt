@@ -29,3 +29,6 @@ https://gorm.io/docs/scopes.html
 
 9.jwt
 go get -u github.com/golang-jwt/jwt/v5
+
+10. cors 
+https://github.com/gin-contrib/cors

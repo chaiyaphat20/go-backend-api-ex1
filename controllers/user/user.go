@@ -25,7 +25,10 @@ func GetAll(c *gin.Context) {
 	// }
 	// configs.DB.Order("id DESC").Find(&users) //ไม่ใช้ users = configs.DB.Find(&users)  เพราะใช้ pointer
 
-	configs.DB.Raw("select * from users order by id desc").Scan(&users)
+	//RAW SQL
+	// configs.DB.Raw("select * from users order by id desc").Scan(&users)
+
+	configs.DB.Preload("Blogs").Find(&users)
 
 	c.JSON(200, gin.H{
 		"data": users,

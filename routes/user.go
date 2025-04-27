@@ -28,3 +28,5 @@ func InitUserRoutes(rg *gin.RouterGroup) {
 	routerGroup.GET("/me", middleware.AuthJWT(), usercontroller.GetMe)
 
 }
+
+//2:50:00

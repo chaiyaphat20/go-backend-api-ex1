@@ -24,6 +24,6 @@ func Connection() {
 
 	//Migration
 	// db.Migrator().DropTable(&models.User{}) //ลบ table
-	db.AutoMigrate(&models.User{})
+	db.AutoMigrate(&models.User{}, &models.Blog{})
 	DB = db
 }
