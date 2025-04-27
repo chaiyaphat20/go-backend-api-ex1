@@ -2,13 +2,13 @@ package routes
 
 import (
 	usercontroller "example.com/gin-backend-api/controllers/user"
-	"example.com/gin-backend-api/middleware"
+	middleware "example.com/gin-backend-api/middlewares"
 	"github.com/gin-gonic/gin"
 )
 
 func InitUserRoutes(rg *gin.RouterGroup) {
-	routerGroup := rg.Group("/users")          //http://localhost:3001/api/v1/users
-	routerGroupProtected := rg.Group("/users") // protect route ถ้าไม่มี jwt
+	routerGroup := rg.Group("/users")
+	//http://localhost:3001/api/v1/users
 
 	//http://localhost:3001/api/v1/users
 	routerGroup.GET("/", usercontroller.GetAll)
@@ -25,10 +25,6 @@ func InitUserRoutes(rg *gin.RouterGroup) {
 	//http://localhost:3001/api/v1/users/search?fullname=j    ส่ง query
 	routerGroup.GET("/search", usercontroller.SearchByFullname)
 
-	routerGroupProtected.Use(middleware.JWTAuthMiddleware())
-	{
-		//http://localhost:3001/api/v1/users/me
-		routerGroupProtected.GET("/me", usercontroller.GetMe)
-	}
+	routerGroup.GET("/me", middleware.AuthJWT(), usercontroller.GetMe)
 
 }

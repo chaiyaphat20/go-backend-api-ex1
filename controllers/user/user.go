@@ -127,18 +127,10 @@ func GetById(c *gin.Context) {
 }
 
 func GetMe(c *gin.Context) {
-	userID, exists := c.Get("user_id")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "user_id not found in context"})
-		return
-	}
-
-	// ถ้าอยากให้เป็น string
-	// userIDStr := userID.(string)
-
+	user := c.MustGet("user")
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Success",
-		"user_id": userID,
+		"user":    user,
 	})
 }
 
