@@ -26,3 +26,6 @@ https://gorm.io/docs/query.html
 
 8.scope
 https://gorm.io/docs/scopes.html
+
+9.jwt
+go get -u github.com/golang-jwt/jwt/v5

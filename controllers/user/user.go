@@ -1,14 +1,19 @@
 package usercontroller
 
 import (
+	"fmt"
 	"math"
 	"net/http"
+	"os"
 	"strconv"
+	"time"
 
 	"example.com/gin-backend-api/configs"
 	"example.com/gin-backend-api/models"
 	"example.com/gin-backend-api/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/matthewhartstonge/argon2"
 )
 
 func GetAll(c *gin.Context) {
@@ -63,8 +68,45 @@ func Register(c *gin.Context) {
 }
 
 func Login(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"data": "login",
+	var input InputLogin
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	//สร้าง model
+	user := models.User{
+		Email:    input.Email,
+		Password: input.Password,
+	}
+	//get email
+	userAccount := configs.DB.Where("email =?", input.Email).First(&user)
+	if userAccount.RowsAffected == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "ไม่พบผู้ใช้งานนี้ในระบบ"})
+		return
+	}
+
+	//compare password
+	ok, _ := argon2.VerifyEncoded([]byte(input.Password), []byte(user.Password))
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "ีuser or password invalid"})
+		return
+	}
+
+	//สร้าง token
+	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"user_id": user.ID,
+		"exp":     time.Now().Add(time.Hour * 24 * 1).Unix(),
+	})
+
+	jwtSecret := os.Getenv("JWT_SECRET")
+	fmt.Println(jwtSecret)
+	accessToken, _ := claims.SignedString([]byte(jwtSecret))
+
+	// ส่ง response กลับ
+	c.JSON(http.StatusCreated, gin.H{
+		"message":      "Login success",
+		"access_token": accessToken,
 	})
 }
 
@@ -81,6 +123,22 @@ func GetById(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"data": user,
+	})
+}
+
+func GetMe(c *gin.Context) {
+	userID, exists := c.Get("user_id")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "user_id not found in context"})
+		return
+	}
+
+	// ถ้าอยากให้เป็น string
+	// userIDStr := userID.(string)
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Success",
+		"user_id": userID,
 	})
 }
 
@@ -118,3 +176,5 @@ func SearchByFullname(c *gin.Context) {
 		"total_pages":  totalPages,
 	})
 }
+
+//1:12:42 hr.
