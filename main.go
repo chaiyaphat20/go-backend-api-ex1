@@ -23,6 +23,7 @@ func main() {
 func SetupRouter() *gin.Engine {
 	router := gin.Default()
 
+	gin.SetMode(gin.DebugMode)
 	//cors
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
